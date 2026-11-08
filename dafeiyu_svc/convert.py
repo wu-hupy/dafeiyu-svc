@@ -21,6 +21,27 @@ import torch
 from pathlib import Path
 
 
+def _yaml_utf8_guard() -> None:
+    """DDSP 用 `open(config.yaml)`（locale 编码）读配置，中文注释在 GBK 机器上会炸；这里强制 UTF-8。"""
+    import io
+
+    import yaml
+
+    orig = yaml.safe_load
+
+    def patched(stream, *args, **kwargs):
+        name = getattr(stream, "name", None)
+        if name and hasattr(stream, "read"):
+            try:
+                with io.open(name, "r", encoding="utf-8") as f:
+                    return orig(f, *args, **kwargs)
+            except (OSError, UnicodeDecodeError):
+                pass
+        return orig(stream, *args, **kwargs)
+
+    yaml.safe_load = patched
+
+
 def _abs(p: str) -> str:
     return os.path.abspath(os.path.expanduser(p))
 
@@ -30,6 +51,7 @@ def load_engine(cfg):
     cfg.paths.weights = Path(cfg.paths.weights).expanduser().resolve()
     cfg.paths.assets = Path(cfg.paths.assets).expanduser().resolve()
     cfg.paths.ddsp_repo = Path(cfg.paths.ddsp_repo).expanduser().resolve()
+    _yaml_utf8_guard()
     repo = str(cfg.paths.ddsp_repo)
     if not os.path.isdir(repo):
         raise SystemExit(f"DDSP-SVC 代码目录不存在: {repo}\n先跑 `python -m dafeiyu_svc.assets`")

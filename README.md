@@ -22,31 +22,59 @@
 
 ## 2. 快速开始（推理）
 
+**先看清要下什么** —— 这是本仓最容易误解的地方：
+
+| 要下什么 | 大小 | 从哪来 |
+|---|---|---|
+| v6 权重 `model_24000.pt` | **67.8 MB** | 本仓 Releases / ModelScope |
+| 底座：DDSP-SVC 代码 + rmvpe + ContentVec-HF + NSF-HiFiGAN(2024.02) | **约 480 MB** | 上游，脚本自动拉 |
+| 合计 | **约 0.55 GB** | |
+
+所以「下个 67 MB 就能跑」是错的：**67 MB 只是 Reflow 那部分权重**，回放还要底座四件。
+
+### 一条命令拉齐并校验
+
 ```bash
-# 0) 依赖
 pip install -r requirements.txt
-
-# 1) 准备底座：DDSP-SVC 6.2 代码 + rmvpe / contentvec / NSF-HiFiGAN 权重
-python -m dafeiyu_svc.assets --root ./assets
-
-# 2) 下载模型权重（放到 ./weights/v6/）
-pip install modelscope
-modelscope download --model wuhupy/dafeiyu-svc-v6 --local_dir ./weights/v6
-#   国内直连；产物为 model_24000.pt（67.8 MB）+ config.yaml + SHA256SUMS
-#   校验：cd weights/v6 && sha256sum -c SHA256SUMS
-
-# 3) 换声
-python -m dafeiyu_svc.convert \
-  --input  dry_vocal.wav \
-  --output out.wav \
-  --prompt my_reference.wav \
-  --weights ./weights/v6 \
-  --assets ./assets \
-  --steps 20
+python -m dafeiyu_svc.bundle --root .        # 拉齐底座 + 权重，逐项校验字节数与 sha256
 ```
 
-`--prompt` 只用于**音色参考**（模型并不在推理时读取它，它只在你重新训练时需要）；
-如果你用我们发布的权重，直接跑第 3 步即可。
+它会打印一张体检表，缺什么、多大、路径在哪，一目了然；再跑一次就是增量补齐：
+
+```bash
+python -m dafeiyu_svc.bundle --root . --check-only    # 只体检，不下载
+```
+
+产物布局与 `config.example.toml` 的默认值一致：
+
+```
+./assets/pretrain/{rmvpe,contentvec_hf,nsf_hifigan}/...
+./third_party/DDSP-SVC/...
+./weights/v6/{model_24000.pt,config.yaml}
+```
+
+国内网络默认走 hf-mirror / ghfast；要换镜像看 `dafeiyu_svc/assets.py` 顶部的 URL 常量。
+
+### 换声
+
+```bash
+cp config.example.toml config.toml
+python -m dafeiyu_svc.convert --input dry_vocal.wav --output out.wav
+```
+
+`config.toml` 里写死的路径可用 `--assets / --weights / --ddsp-repo` 或环境变量
+`DAFEIYU_ASSETS / DAFEIYU_WEIGHTS / DAFEIYU_DDSP_REPO` 覆盖。
+
+自检（合成 3 秒类人声，不依赖任何受版权保护的音频）：
+
+```bash
+python tests/smoke.py --assets ./assets --weights ./weights/v6
+# SMOKE: PASS   len diff 0 / rms -20.5 dBFS / deterministic: True
+```
+
+> 若你自己换过 `config.yaml` 并在里面写了中文注释：DDSP 用 locale 编码读 YAML，
+> 在中文 Windows 上会报 `UnicodeDecodeError: 'gbk' codec ...`。本包的加载器已强制 UTF-8，
+> 直接调 DDSP 原始脚本时请设 `PYTHONUTF8=1`。
 
 ## 3. 训练（配方已发布）
 
