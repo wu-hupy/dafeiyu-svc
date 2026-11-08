@@ -14,7 +14,8 @@
 
 ## 1. 这是什么
 
-- 一个 16.9M 参数的 Reflow 换声模型（checkpoint `model_24000.pt`，见 Releases / HuggingFace）
+- 一个 16.9M 参数的 Reflow 换声模型（checkpoint `model_24000.pt`，权重发布在
+  [ModelScope: `wuhupy/dafeiyu-svc-v6`](https://modelscope.cn/models/wuhupy/dafeiyu-svc-v6)）
 - 一套训练配方：如何从公开歌声数据造出**干净、音色互相一致**的训练集
 - 一套评测工具：`tilt / hi10k / 12–16k / 非谐波细节 / f0 误差 / CAM++ 身份相似度`
 - 一套踩坑记录：`docs/TROUBLESHOOTING.md`（这是本项目最值钱的部分之一）
@@ -29,7 +30,10 @@ pip install -r requirements.txt
 python -m dafeiyu_svc.assets --root ./assets
 
 # 2) 下载模型权重（放到 ./weights/v6/）
-#    model_24000.pt + config.yaml
+pip install modelscope
+modelscope download --model wuhupy/dafeiyu-svc-v6 --local_dir ./weights/v6
+#   国内直连；产物为 model_24000.pt（67.8 MB）+ config.yaml + SHA256SUMS
+#   校验：cd weights/v6 && sha256sum -c SHA256SUMS
 
 # 3) 换声
 python -m dafeiyu_svc.convert \
