@@ -38,14 +38,24 @@ python -m dafeiyu_svc.convert \
 `--prompt` 只用于**音色参考**（模型并不在推理时读取它，它只在你重新训练时需要）；
 如果你用我们发布的权重，直接跑第 3 步即可。
 
-## 3. 训练（配方已发布，脚本正在整理）
+## 3. 训练（配方已发布）
 
-完整的训练配方（选片 → 教师换声 → 配对频响校正 → 空气带补齐 → 一致性剪枝 → Reflow 训练）
-在 `docs/PIPELINE.md`，包含每一步的判据与阈值，以及"为什么不能用统一曲线/到质心距离"这类反例。
+完整的训练配方在 **[`docs/TRAINING.md`](docs/TRAINING.md)**：选片 → 教师换声（Seed-VC 44.1k）
+→ 配对频响校正 → 一致性剪枝 → Reflow 训练 → 四个对象横比验收。每一步都写了阈值、
+实测数字，以及"为什么不能用统一曲线 / 不能用到质心距离"这类反例。
 
-训练脚本整理中（v0.2 发布）。当前阶段你可以：
-- 直接用我们发布的权重做推理；
-- 按 `docs/PIPELINE.md` 用现有开源工具复现（每一步都写了调用方式）。
+造数据阶段用到 Seed-VC，它是 **GPL-3.0**，所以本仓库**不 import 它的代码**，只用
+[`tools/seedvc_generate.py`](tools/seedvc_generate.py) 以**子进程**方式调用你自己装的 Seed-VC
+（两个独立程序通过命令行通信，不构成链接，因此本仓库可以保持 MIT）。
+
+```bash
+pip install -r requirements.txt
+python tools/seedvc_generate.py --seedvc-dir /path/to/seed-vc --list clips.txt \
+    --ref my_reference.wav --out data/teacher --steps 50 --cfg 0.7
+```
+
+> 想要"一个仓里跑完全部流程"的话，唯一诚实的做法是把整仓改成 GPL-3.0；
+> 我们不这么做，是为了让推理部分能被商业项目直接依赖。
 
 ## 4. 已知限制
 
