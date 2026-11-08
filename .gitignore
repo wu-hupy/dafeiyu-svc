@@ -1,0 +1,40 @@
+# 字节码 / 依赖
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 配置与私人路径
+config.toml
+config.local.toml
+
+# 权重与底座（用 assets.py 下载）
+assets/
+third_party/
+weights/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+
+# 音频：本仓库永不提交音频
+*.wav
+*.mp3
+*.flac
+*.m4a
+*.ogg
+*.opus
+
+# 训练产物
+exp/
+data/
+logs/
+*.log
+tensorboard/
+runs/
+
+# 系统
+.DS_Store
+Thumbs.db

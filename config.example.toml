@@ -1,0 +1,28 @@
+# dafeiyu-svc 配置文件（复制成 config.toml 使用，或用环境变量覆盖）
+#
+# 环境变量优先级高于本文件：
+#   DAFEIYU_DDSP_REPO    DDSP-SVC 6.2 代码目录
+#   DAFEIYU_ASSETS       底座权重目录（rmvpe / contentvec / NSF-HiFiGAN，镜像 upstream 的 pretrain/ 布局）
+#   DAFEIYU_WEIGHTS      本权重目录（model_*.pt + config.yaml）
+
+[paths]
+ddsp_repo = "third_party/DDSP-SVC"
+assets    = "assets"
+weights   = "weights/v6"
+
+[infer]
+steps      = 20        # 扩散步数；>50 基本无收益（见 TROUBLESHOOTING）
+t_start    = 0.7
+method     = "euler"
+key        = 0.0       # 全局移调半音；输入已与目标同调就填 0
+smooth     = 0         # mel 时间平滑帧数；0 = 关（实测无用，留作实验）
+threhold   = -60       # 门控阈值 dBFS
+f0_min     = 60.0
+f0_max     = 800.0
+device     = ""        # 空 = 自动
+
+[train]
+seed        = 7
+steps       = 20000
+batch_size  = 24
+val_interval= 1000

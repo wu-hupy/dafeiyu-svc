@@ -1,0 +1,17 @@
+torch>=2.3
+torchaudio>=2.3
+numpy<2
+scipy
+librosa>=0.10
+soundfile>=0.12
+pyworld
+praat-parselmouth
+torchcrepe
+resampy
+transformers>=4.40
+PyYAML
+tqdm
+# 可选：教师换声 / 分离 / 评测
+#   seed-vc        （GPL-3.0，需自行安装）
+#   audio-separator
+#   funasr + modelscope  （CAM++ 评测）
