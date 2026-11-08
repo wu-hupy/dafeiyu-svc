@@ -78,6 +78,6 @@ python tools/seedvc_generate.py --seedvc-dir /path/to/seed-vc --list clips.txt \
 @misc{dafeiyu_svc,
   title  = {dafeiyu-svc: a reproducible pipeline for many-to-one singing voice conversion},
   year   = {2026},
-  note   = {https://github.com/<you>/dafeiyu-svc}
+  note   = {https://github.com/wu-hupy/dafeiyu-svc}
 }
 ```
