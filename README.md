@@ -1,5 +1,11 @@
 # dafeiyu-svc
 
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![weights: CC BY-NC 4.0](https://img.shields.io/badge/weights-CC%20BY--NC%204.0-lightgrey.svg)](LICENSE-WEIGHTS.md)
+[![python](https://img.shields.io/badge/python-3.10%2B-informational.svg)](requirements.txt)
+
+仓库：<https://github.com/wu-hupy/dafeiyu-svc> · 训练与造数据：<https://github.com/wu-hupy/dafeiyu-svc-train>（GPL-3.0）
+
 用 DDSP-SVC（Reflow）做**歌声换声（many-to-one singing voice conversion）**的一套可复现流水线：
 数据清洗 → 教师换声 → 配对频响校正 → 空气带补齐 → 一致性剪枝 → 训练 → 推理 → 评测。
 
