@@ -63,6 +63,9 @@ python tools/seedvc_generate.py --seedvc-dir /path/to/seed-vc --list clips.txt \
 > 想要"一个仓里跑完全部流程"的话，唯一诚实的做法是把整仓改成 GPL-3.0；
 > 我们不这么做，是为了让推理部分能被商业项目直接依赖。
 
+对应的训练仓版本：**[`dafeiyu-svc-train v0.1.0`](https://github.com/wu-hupy/dafeiyu-svc-train/tree/v0.1.0)**。
+训练仓更新后，本文档与 v6 权重的对应关系以这个 tag 为准。
+
 ## 4. 已知限制
 
 - 参考音如果是**说话**而不是**唱歌**，模型会继承它"没有气声、没有 12k 以上"的上限（见 MODEL_CARD）。
